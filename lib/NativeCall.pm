@@ -1,24 +1,28 @@
 class CPointer { }
 
-our sub perl6-sig-to-backend-sig(Signature $siggy) {
-    my $sig-string = "l"; # XXX Need to handle return types.
-    my @params = $siggy.params();
+our sub map-type-to-sig-char(Mu $type) {
+    given $type {
+        when Int      { 'l' }
+        when Str      { 't' }
+        when Num      { 'd' }
+        when Rat      { 'd' }
+        when CPointer { 'P' }
+        default { die "Can not handle type " ~ $_.perl ~ " in an 'is native' signature." }
+    }
+}
+
+our sub perl6-sig-to-backend-sig(Routine $r) {
+    my $sig-string = map-type-to-sig-char($r.returns());
+    my @params = $r.signature.params();
     for @params -> $p {
-        given $p.type {
-            when Int      { $sig-string = $sig-string ~ 'l' }
-            when Str      { $sig-string = $sig-string ~ 't' }
-            when Num      { $sig-string = $sig-string ~ 'd' }
-            when Rat      { $sig-string = $sig-string ~ 'd' }
-            when CPointer { $sig-string = $sig-string ~ 'P' }
-            default { die "Can not handle type " ~ $_.perl ~ " in a native signature." }
-        }
+        $sig-string = $sig-string ~ map-type-to-sig-char($p.type);
     }
     return $sig-string;
 }
 
 our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
     my $entry-point = $r.name();
-    my $call-sig = perl6-sig-to-backend-sig($r.signature());
+    my $call-sig = perl6-sig-to-backend-sig($r);
     pir::setattribute__vPsP($r, '$!do', -> |$c {
         (pir::dlfunc__PPss(
             pir::loadlib__Ps($libname),
