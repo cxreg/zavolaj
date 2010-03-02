@@ -1,4 +1,15 @@
 Zavolaj!
 
-This project aims to prototype native calling interface functionality for Rakudo (that is, giving Rakudo the ability to call out to C libraries without having to drop to writing PIR).
+This project prototypes native calling interface functionality for
+Rakudo.  It should give Rakudo the ability to call out to C libraries
+without having to drop to writing PIR).  The Parrot Native Call
+Interface gives a similar facility in PIR.
 
+The project name is the Slovak translation of the imperative "call!", to
+complement Blizkost, a Rakudo-to-Perl-5 integration project.
+
+Initially the mysql client library is being used as a fairly substantial
+test case.  The result might become a useful component in the Rakudo *
+release.
+
+The include/mysql.h file 
