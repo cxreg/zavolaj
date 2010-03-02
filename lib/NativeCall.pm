@@ -1,5 +1,14 @@
 our sub perl6-sig-to-backend-sig(Signature $siggy) {
-    "llttl"
+    my $sig-string = "l"; # XXX Need to handle return types.
+    my @params = $siggy.params();
+    for @params -> $p {
+        given $p.type {
+            when Int { $sig-string = $sig-string ~ 'l'; }
+            when Str { $sig-string = $sig-string ~ 't'; }
+            default { die "Can not handle type " ~ $_.perl ~ " in a native signature." }
+        }
+    }
+    return $sig-string;
 }
 
 our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
