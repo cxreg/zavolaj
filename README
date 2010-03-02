@@ -1,0 +1,4 @@
+Zavolaj!
+
+This project aims to prototype native calling interface functionality for Rakudo (that is, giving Rakudo the ability to call out to C libraries without having to drop to writing PIR).
+
