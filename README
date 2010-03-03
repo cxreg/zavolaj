@@ -12,4 +12,7 @@ Initially the mysql client library is being used as a fairly substantial
 test case.  The result might become a useful component in the Rakudo *
 release.
 
-The include/mysql.h file 
+The /usr/include/mysql.h file defines the mysql client library functions
+and their parameters.
+
+
