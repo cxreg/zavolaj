@@ -2,26 +2,46 @@ class OpaquePointer { }
 
 class NativeArray {
     has $!unmanaged;
+    has $!of;
     has $!max-index = -1;
 
     method postcircumfix:<[ ]>($idx) {
+        say "in postcircumfix:<[ ]>($idx)";
         if $idx > $!max-index {
             self!update-desc-to-index($idx);
         }
-        $!unmanaged[$idx]
+        say "trying to index";
+        Q:PIR {
+            $P0 = find_lex 'self'
+            $P0 = getattribute $P0, '$!unmanaged'
+            $P1 = find_lex '$idx'
+            $S0 = $P0[$P1]
+            %r = box $S0
+        };
     }
 
     method !update-desc-to-index($idx) {
+        say "in update-desc-to-index($idx)";
         my $fpa = pir::new__Ps('FixedIntegerArray');
         pir::set__vPi($fpa, 3);
-        given self.of {
-            when Str { $fpa[0] = -70 }
-            when Int { $fpa[0] = -92 }
-            when Num { $fpa[0] = -83 }
+        my $typeid;
+        given $!of {
+            when Str { $typeid = -70 }
+            when Int { $typeid = -92 }
+            when Num { $typeid = -83 }
+            default { die "Unknown type"; }
         }
-        $fpa[1] = $idx + 1;
-        $fpa[2] = 0;
-        pir::set__vPP($!unmanaged, $fpa);
+        Q:PIR {
+            $P0 = find_lex '$fpa'
+            $P1 = find_lex '$typeid'
+            $P0[0] = $P1
+            $P1 = find_lex '$idx'
+            $I0 = $P1
+            inc $I0
+            $P0[1] = $I0
+            $P0[2] = 0
+        };
+        pir::assign__vPP(pir::descalarref__PP($!unmanaged), $fpa);
     }
 }
 
@@ -50,7 +70,7 @@ our sub make-mapper(Mu $type) {
     given $type {
         when Positional {
             -> \$unmanaged-struct {
-                NativeArray.new(unmanaged => $unmanaged-struct) does $type
+                NativeArray.new(unmanaged => $unmanaged-struct, of => $type.of)
             }
         }
         default { -> \$x { $x } }

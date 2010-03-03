@@ -11,74 +11,74 @@
 
 use NativeCall;
 
-class CPointer { ... }
-# hack compensating for too-late import of CPointer from NativeCall.pm
+class OpaquePointer { ... }
+# hack compensating for too-late import of OpaquePointer from NativeCall.pm
 
 # ------------------- foreign function definitions ---------------------
 
-sub mysql_init( CPointer $mysql_client)
-    returns CPointer
+sub mysql_init( OpaquePointer $mysql_client)
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
-sub mysql_real_connect( CPointer $mysql_client, Str $host, Str $user,
+sub mysql_real_connect( OpaquePointer $mysql_client, Str $host, Str $user,
     Str $password, Str $database, Int $port, Str $socket, Int $flag )
-    returns CPointer
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
-sub mysql_error( CPointer $mysql_client)
+sub mysql_error( OpaquePointer $mysql_client)
     returns Str
     is native('libmysqlclient')
     { ... }
 
-sub mysql_stat( CPointer $mysql_client)
+sub mysql_stat( OpaquePointer $mysql_client)
     returns Str
     is native('libmysqlclient')
     { ... }
 
-sub mysql_get_client_info( CPointer $mysql_client)
+sub mysql_get_client_info( OpaquePointer $mysql_client)
     returns Str
     is native('libmysqlclient')
     { ... }
 
-sub mysql_query( CPointer $mysql_client, Str $sql_command )
+sub mysql_query( OpaquePointer $mysql_client, Str $sql_command )
     returns Int
     is native('libmysqlclient')
     { ... }
 
-sub mysql_store_result( CPointer $mysql_client )
-    returns CPointer
+sub mysql_store_result( OpaquePointer $mysql_client )
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
-sub mysql_use_result( CPointer $mysql_client )
-    returns CPointer
+sub mysql_use_result( OpaquePointer $mysql_client )
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
-sub mysql_field_count( CPointer $mysql_client )
+sub mysql_field_count( OpaquePointer $mysql_client )
     returns Int
     is native('libmysqlclient')
     { ... }
 
-sub mysql_fetch_row( CPointer $result_set )
-    returns CPointer
+sub mysql_fetch_row( OpaquePointer $result_set )
+    returns Positional of Str
     is native('libmysqlclient')
     { ... }
 
-sub mysql_num_rows( CPointer $result_set )
+sub mysql_num_rows( OpaquePointer $result_set )
     returns Int
     is native('libmysqlclient')
     { ... }
 
-sub mysql_fetch_field( CPointer $result_set )
-    returns CPointer
+sub mysql_fetch_field( OpaquePointer $result_set )
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
-sub mysql_free_result( CPointer $result_set )
-    returns CPointer
+sub mysql_free_result( OpaquePointer $result_set )
+    returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
@@ -89,24 +89,24 @@ my $client = mysql_init( pir::null__P() );
 print mysql_error($client);
 
 say "real_connect";
-mysql_real_connect( pir::descalarref__PP($client), 'localhost', 'testuser',
-    'testpass', 'mysql', 0, pir::null__P(), 0 );
+mysql_real_connect( $client, 'localhost', 'testuser', 'testpass',
+    'mysql', 0, pir::null__P(), 0 );
 print mysql_error($client);
 
 say "DROP DATABASE zavolaj";
-mysql_query( pir::descalarref__PP($client), "
+mysql_query( $client, "
     DROP DATABASE zavolaj
 ");
 print mysql_error($client);
 
 say "CREATE DATABASE zavolaj";
-mysql_query( pir::descalarref__PP($client), "
+mysql_query( $client, "
     CREATE DATABASE zavolaj
 ");
 print mysql_error($client);
 
 say "USE zavolaj";
-mysql_query( pir::descalarref__PP($client), "
+mysql_query( $client, "
     USE zavolaj
 ");
 print mysql_error($client);
@@ -118,7 +118,7 @@ print "get_client_info: ";
 say mysql_get_client_info($client);
 
 say "CREATE TABLE nom";
-mysql_query( pir::descalarref__PP($client),"
+mysql_query( $client,"
     CREATE TABLE nom (
         name char(4),
         description char(30),
@@ -129,7 +129,7 @@ mysql_query( pir::descalarref__PP($client),"
 print mysql_error($client);
 
 say "INSERT nom";
-mysql_query( pir::descalarref__PP($client), "
+mysql_query( $client, "
     INSERT nom (name, description, quantity, price)
     VALUES ( 'BUBH', 'Hot beef burrito',         1, 4.95 ),
            ( 'TAFM', 'Mild fish taco',           1, 4.85 ),
@@ -138,7 +138,7 @@ mysql_query( pir::descalarref__PP($client), "
 print mysql_error($client);
 
 say "SELECT *, quantity*price AS amount FROM nom";
-mysql_query( pir::descalarref__PP($client), "
+mysql_query( $client, "
     SELECT *, quantity*price AS amount FROM nom
 ");
 print mysql_error($client);
@@ -170,6 +170,7 @@ if $batch-mode {
         # It would be better to be able to call mysql_fetch_fields().
         loop ( my $field_number=0; $field_number<$field_count; $field_number++ ) {
            print "field $field_number ";
+           print $row_data[$field_number];
 #          my $field = mysql_fetch_field( $result_set );
         }
         say " ";
