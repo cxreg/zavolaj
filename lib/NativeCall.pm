@@ -2,9 +2,26 @@ class OpaquePointer { }
 
 class NativeArray {
     has $!unmanaged;
+    has $!max-index = -1;
 
-    method postcircumfix:<[ ]>($key) {
-        die "Native Array NYI";
+    method postcircumfix:<[ ]>($idx) {
+        if $idx > $!max-index {
+            self!update-desc-to-index($idx);
+        }
+        $!unmanaged[$idx]
+    }
+
+    method !update-desc-to-index($idx) {
+        my $fpa = pir::new__Ps('FixedIntegerArray');
+        pir::set__vPi($fpa, 3);
+        given self.of {
+            when Str { $fpa[0] = -70 }
+            when Int { $fpa[0] = -92 }
+            when Num { $fpa[0] = -83 }
+        }
+        $fpa[1] = $idx + 1;
+        $fpa[2] = 0;
+        pir::set__vPP($!unmanaged, $fpa);
     }
 }
 
@@ -32,8 +49,8 @@ our sub perl6-sig-to-backend-sig(Routine $r) {
 our sub make-mapper(Mu $type) {
     given $type {
         when Positional {
-            -> \$umanaged-struct {
-                NativeArray.new(unmanaged => $umanaged-struct)
+            -> \$unmanaged-struct {
+                NativeArray.new(unmanaged => $unmanaged-struct) does $type
             }
         }
         default { -> \$x { $x } }
