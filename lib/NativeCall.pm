@@ -2,11 +2,11 @@ class CPointer { }
 
 our sub map-type-to-sig-char(Mu $type) {
     given $type {
-        when Int      { 'l' }
+        when Int      { 'i' }
         when Str      { 't' }
         when Num      { 'd' }
         when Rat      { 'd' }
-        when CPointer { 'P' }
+        when CPointer { 'p' }
         default { die "Can not handle type " ~ $_.perl ~ " in an 'is native' signature." }
     }
 }
@@ -23,11 +23,11 @@ our sub perl6-sig-to-backend-sig(Routine $r) {
 our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
     my $entry-point = $r.name();
     my $call-sig = perl6-sig-to-backend-sig($r);
-    pir::setattribute__vPsP($r, '$!do', -> |$c {
+    pir::setattribute__vPsP($r, '$!do', pir::clone__PP(-> |$c {
         (pir::dlfunc__PPss(
             pir::loadlib__Ps($libname),
             $entry-point,
             $call-sig
         )).(|$c)
-    });
+    }));
 }
