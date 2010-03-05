@@ -34,12 +34,21 @@ class NativeArray {
         Q:PIR {
             $P0 = find_lex '$fpa'
             $P1 = find_lex '$typeid'
-            $P0[0] = $P1
-            $P1 = find_lex '$idx'
-            $I0 = $P1
-            inc $I0
-            $P0[1] = $I0
-            $P0[2] = 0
+            $P2 = find_lex '$idx'
+            $I0 = $P2
+	    inc $I0
+	    $I0 = $I0 * 3
+            $I1 = 0
+	  loop:
+            if $I1 > $I0 goto loop_end
+	    $P0[$I1] = $P1
+	    inc $I1
+	    $P0[$I1] = 1
+	    inc $I1
+	    $P0[$I1] = 0
+	    inc $I1
+	    goto loop
+	  loop_end:
         };
         pir::assign__vPP(pir::descalarref__PP($!unmanaged), $fpa);
     }
