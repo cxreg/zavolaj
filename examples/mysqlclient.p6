@@ -151,7 +151,9 @@ say $field_count;
 # There are two ways to retrieve result sets: all at once in a single
 # batch, or one row at a time.  Choose according to the amount of data
 # and the overhead on the server and the client.
-my $batch-mode = True;
+my $batch-mode;
+$batch-mode = (True,False).pick; # aha, you came looking for this line :-)
+$batch-mode = True;
 if $batch-mode {
     # Retrieve all the rows in a single batch operation
     say "store_result";
@@ -163,15 +165,27 @@ if $batch-mode {
     print mysql_error($client);
     say $num_rows;
 
+    # Since mysql_fetch_fields() is not usable yet, derive the
+    # column widths from the maximum widths of the data in each
+    # column
+    my @width = 0 xx $field_count;
+    for 
+
     say "fetch_row and fetch_field";
     loop ( my $row_number=0; $row_number<$num_rows; $row_number++ ) {
-        print "row $row_number: ";
+#       print "$row_number: ";
         my $row_data = mysql_fetch_row( $result_set );
+
         # It would be better to be able to call mysql_fetch_fields().
+        # my @row = mysql_fetch_fields($result_set);
+        # But that cannot be implmented yet in Rakudo because the
+        # returned result is a packed binary record of character
+        # pointers, unsigned longs and unsigned ints. See mysql.h
+
         loop ( my $field_number=0; $field_number<$field_count; $field_number++ ) {
-           print "field $field_number ";
            print $row_data[$field_number];
 #          my $field = mysql_fetch_field( $result_set );
+#          print "$field ";
         }
         say " ";
     }

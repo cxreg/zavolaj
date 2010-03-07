@@ -8,6 +8,8 @@ Interface gives a similar facility in PIR.
 The project name is the Slovak translation of the imperative "call!", to
 complement Blizkost, a Rakudo-to-Perl-5 integration project.
 
+MySQL 
+
 Initially the mysql client library is being used as a fairly substantial
 test case.  The result might become a useful component in the Rakudo *
 release.
@@ -15,4 +17,16 @@ release.
 The /usr/include/mysql.h file defines the mysql client library functions
 and their parameters.
 
+Prepare your system along these lines before trying out the examples:
+
+    $ mysql -u root -p
+    CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpass';
+    GRANT CREATE ON *.* TO 'testuser'@'localhost';
+    
+You can look at the results via a normal mysql connection:
+
+    $ mysql -utestuser -ptestpass
+    USE zavolaj;
+    SHOW TABLES;
+    SELECT * FROM nom;
 
