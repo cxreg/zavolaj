@@ -10,9 +10,10 @@ complement Blizkost, a Rakudo-to-Perl-5 integration project.
 
 MySQL 
 
-Initially the mysql client library is being used as a fairly substantial
-test case.  The result might become a useful component in the Rakudo *
-release.
+Initially the MySQL client library is being used as a test case, because
+it is a popular application, is frequently asked about, and because
+there is specific support for MySQL in parrot/src/nci/extra_thunks.nci.
+Some of the code might become a part of the Rakudo * distribution.
 
 The /usr/include/mysql.h file defines the mysql client library functions
 and their parameters.
