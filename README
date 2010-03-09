@@ -21,7 +21,12 @@ Prepare your system along these lines before trying out the examples:
 
     $ mysql -u root -p
     CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpass';
-    GRANT CREATE ON *.* TO 'testuser'@'localhost';
+    GRANT CREATE ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT DROP   ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT INSERT ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT SELECT ON zavolaj.* TO 'testuser'@'localhost';
+    # or maybe otherwise
+    GRANT ALL PRIVILEGES ON zavolaj.* TO 'testuser'@'localhost';
     
 You can look at the results via a normal mysql connection:
 
