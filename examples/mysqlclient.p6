@@ -19,9 +19,6 @@
 
 use NativeCall;
 
-class OpaquePointer { ... }
-# hack compensating for too-late import of OpaquePointer from NativeCall.pm
-
 # -------- foreign function definitions in alphabetical order ----------
 
 sub mysql_affected_rows( OpaquePointer $mysql_client )
