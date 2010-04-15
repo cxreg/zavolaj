@@ -84,13 +84,18 @@ our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
     my $entry-point   = $r.name();
     my $call-sig      = perl6-sig-to-backend-sig($r);
     my $return-mapper = make-mapper($r.returns);
+    my $lib           = pir::loadlib__Ps($libname);
+    unless $lib {
+        die "The native library '$libname' required for '$entry-point' could not be located";
+    }
     pir::setattribute__vPsP($r, '$!do', pir::clone__PP(-> |$c {
         $return-mapper(
             (pir::dlfunc__PPss(
-                pir::loadlib__Ps($libname),
+                pir::descalarref__PP($lib),
                 $entry-point,
                 $call-sig
-            )).(|$c)
+                ) // die("Could not locate symbol '$entry-point' in native library '$libname'")
+            ).(|$c)
         )
     }));
 }
