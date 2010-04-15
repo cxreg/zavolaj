@@ -1,6 +1,7 @@
 use NativeCall;
 
 sub MessageBoxA(Int $phWnd, Str $message, Str $caption, Int $flags)
+    returns Int
     is native('user32')
     { ... }
 
