@@ -61,7 +61,7 @@ our sub map-type-to-sig-char(Mu $type) {
 }
 
 our sub perl6-sig-to-backend-sig(Routine $r) {
-    my $sig-string = map-type-to-sig-char($r.returns());
+    my $sig-string = $r.returns === Mu ?? 'v' !! map-type-to-sig-char($r.returns());
     my @params = $r.signature.params();
     for @params -> $p {
         $sig-string = $sig-string ~ map-type-to-sig-char($p.type);
@@ -94,3 +94,4 @@ our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
         )
     }));
 }
+
