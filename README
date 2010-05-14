@@ -26,13 +26,23 @@ Prepare your system along these lines before trying out the examples:
     GRANT DROP   ON zavolaj.* TO 'testuser'@'localhost';
     GRANT INSERT ON zavolaj.* TO 'testuser'@'localhost';
     GRANT SELECT ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT SELECT ON mysql.*   TO 'testuser'@'localhost';
     # or maybe otherwise
     GRANT ALL PRIVILEGES ON zavolaj.* TO 'testuser'@'localhost';
-    
+
 You can look at the results via a normal mysql connection:
 
     $ mysql -utestuser -ptestpass
     USE zavolaj;
     SHOW TABLES;
     SELECT * FROM nom;
+
+Testing
+
+Before running 'make test', you *must* perform this:
+
+    sudo apt-get install libmysqlclient-dev
+    sudo apt-get install libtest-harness-perl
+    export PERL6LIB=lib
+
 
