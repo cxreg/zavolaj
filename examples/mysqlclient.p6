@@ -210,7 +210,7 @@ my @width = 0 xx $field_count;
 # and the overhead on the server and the client.
 my $batch-mode;
 $batch-mode = (True,False).pick; # aha, you came looking for this line :-)
-$batch-mode = True;
+#$batch-mode = False;
 if $batch-mode {
     # Retrieve all the rows in a single batch operation
     say "store_result";
@@ -277,17 +277,15 @@ else {
     my $result_set = mysql_use_result($client);
     print mysql_error($client);
 
-    my $retrieving = True;
-    while ( $retrieving ) {
-        my $row_data = mysql_fetch_row($result_set);
-        my @row = ();
+    while my $row_data = mysql_fetch_row($result_set) {
+        my @row;
         loop ( my $field_number=0; $field_number<$field_count; $field_number++ ) {
             my $field = $row_data[$field_number];
             @width[$field_number] = max @width[$field_number], $field.chars;
             push @row, $field;
         }
-        @row.join(',').say;
-#       $retrieving = False;
+        @row.join(', ').say;
+        # no fancy boxes this time because the width of later fields is unknown
     }
     say "free_result";
     mysql_free_result($result_set);

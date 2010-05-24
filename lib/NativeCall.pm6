@@ -32,19 +32,28 @@ class NativeArray {
             $P1 = find_lex '$typeid'
             $P2 = find_lex '$idx'
             $I0 = $P2
-	        inc $I0
-	        $I1 = 0
-	        $I2 = $P1
-	  loop:
-        if $I1 > $I0 goto loop_end
-	    push $P0, $I2
-	    push $P0, 1
-	    push $P0,  0
-	    inc $I1
-	    goto loop
-	  loop_end:
+            inc $I0
+            $I1 = 0
+            $I2 = $P1
+          loop:
+            if $I1 > $I0 goto loop_end
+            push $P0, $I2
+            push $P0, 1
+            push $P0,  0
+            inc $I1
+            goto loop
+          loop_end:
         };
         pir::assign__vPP(pir::descalarref__PP($!unmanaged), $fpa);
+    }
+
+    method Bool() {
+        Q:PIR {
+            $P0 = find_lex 'self'
+            $P0 = getattribute $P0, '$!unmanaged'  # a Parrot UnManagedStruct
+            $I0 = defined $P0
+            %r = box $I0
+        } ?? Bool::True !! Bool::False;
     }
 }
 
