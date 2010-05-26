@@ -94,6 +94,7 @@ our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
     my $call-sig      = perl6-sig-to-backend-sig($r);
     my $return-mapper = make-mapper($r.returns);
     my $lib           = pir::loadlib__Ps($libname);
+    # warn "routine $r.name() signature $call-sig";
     unless $lib {
         die "The native library '$libname' required for '$entry-point' could not be located";
     }

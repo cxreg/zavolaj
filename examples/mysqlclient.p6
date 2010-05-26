@@ -62,7 +62,7 @@ sub mysql_field_count( OpaquePointer $mysql_client )
     { ... }
 
 sub mysql_free_result( OpaquePointer $result_set )
-    returns OpaquePointer
+#   returns OpaquePointer
     is native('libmysqlclient')
     { ... }
 
@@ -83,7 +83,7 @@ sub mysql_library_init( Int $argc, OpaquePointer $argv,
     { ... }
 
 sub mysql_library_end()
-    returns OpaquePointer # currently not working, should be void
+#   returns OpaquePointer # currently not working, should be void
     is native('libmysqlclient')
     { ... }
 
