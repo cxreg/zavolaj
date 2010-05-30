@@ -8,7 +8,7 @@ Interface gives a similar facility in PIR.
 The project name is the Slovak translation of the imperative "call!", to
 complement Blizkost, a Rakudo-to-Perl-5 integration project.
 
-MySQL 
+MySQL
 
 Initially the MySQL client library is being used as a test case, because
 it is a popular application, is frequently asked about, and because
@@ -21,12 +21,15 @@ and their parameters.
 Prepare your system along these lines before trying out the examples:
 
     $ mysql -u root -p
+    CREATE DATABASE zavolaj;
     CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpass';
-    GRANT CREATE ON zavolaj.* TO 'testuser'@'localhost';
-    GRANT DROP   ON zavolaj.* TO 'testuser'@'localhost';
-    GRANT INSERT ON zavolaj.* TO 'testuser'@'localhost';
-    GRANT SELECT ON zavolaj.* TO 'testuser'@'localhost';
-    GRANT SELECT ON mysql.*   TO 'testuser'@'localhost';
+    GRANT CREATE      ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT DROP        ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT INSERT      ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT DELETET     ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT SELECT      ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT LOCK TABLES ON zavolaj.* TO 'testuser'@'localhost';
+    GRANT SELECT      ON   mysql.* TO 'testuser'@'localhost';
     # or maybe otherwise
     GRANT ALL PRIVILEGES ON zavolaj.* TO 'testuser'@'localhost';
 
@@ -36,6 +39,11 @@ You can look at the results via a normal mysql connection:
     USE zavolaj;
     SHOW TABLES;
     SELECT * FROM nom;
+
+SQLite3
+
+This library cannot be called yet because of missing Parrot NCI
+signatures, see the example file for details.
 
 Testing
 
