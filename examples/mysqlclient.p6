@@ -1,5 +1,13 @@
 # mysqlclient.p6
 
+# Requirements:
+# 1. MySQL client lib (eg on Debian, sudo apt-get install mysqlclient-dev
+# 2. An account and a database on a MySQL server, for this example:
+#    username = testuser
+#    password = testpass
+#    database = zavolaj
+# 3. Permissions, eg "grant all privileges on zavolaj.* to testuser@localhost"
+
 # Fortunately made possible by explicitly by hardcoded support in
 # parrot/src/nci/extra_thunks.nci.
 # See /usr/include/mysql.h for what should be callable, or browse
@@ -42,7 +50,7 @@ sub mysql_error( OpaquePointer $mysql_client)
     { ... }
 
 sub mysql_fetch_field( OpaquePointer $result_set )
-    returns OpaquePointer
+    returns Positional of Str
     is native('libmysqlclient')
     { ... }
 
@@ -217,6 +225,13 @@ if $batch-mode {
     my $result_set = mysql_store_result($client);
     print mysql_error($client);
 
+    say "Columns:";
+    loop ( my $column_number=0; $column_number<$field_count; $column_number++ ) {
+        my $field_info = mysql_fetch_field($result_set);
+        my $column_name = $field_info[0];
+        say "  $column_name";
+    }
+
     print "row_count ";
     $row_count = mysql_num_rows($result_set);
     print mysql_error($client);
@@ -276,6 +291,13 @@ else {
     say "use_result";
     my $result_set = mysql_use_result($client);
     print mysql_error($client);
+
+    say "Columns:";
+    loop ( my $column_number=0; $column_number<$field_count; $column_number++ ) {
+        my $field_info = mysql_fetch_field($result_set);
+        my $column_name = $field_info[0];
+        say "  $column_name";
+    }
 
     while my $row_data = mysql_fetch_row($result_set) {
         my @row;

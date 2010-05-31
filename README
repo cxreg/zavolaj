@@ -8,12 +8,22 @@ Interface gives a similar facility in PIR.
 The project name is the Slovak translation of the imperative "call!", to
 complement Blizkost, a Rakudo-to-Perl-5 integration project.
 
+The functions that Zavolaj can currently call must have signatures (the
+type of the return value and the types of the arguments) that already
+exist in a fixed list inside Parrot.  Adding more signatures currently
+involves adding entries to the parrot/src/nci/extra_thunks.nci file.
+
+There is a project to enable calling all possible function signatures:
+http://github.com/plobsing/parrot-libjit-fb is currently a Parrot
+extension.  Zavolaj does not use it yet.
+
 MySQL
 
 Initially the MySQL client library is being used as a test case, because
 it is a popular application, is frequently asked about, and because
-there is specific support for MySQL in parrot/src/nci/extra_thunks.nci.
-Some of the code might become a part of the Rakudo * distribution.
+Parrot does have all the function signatures.  There is a Rakudo project
+http://github.com/mberends/fakedbi that wraps these functions with a DBI
+compatible interface.
 
 The /usr/include/mysql.h file defines the mysql client library functions
 and their parameters.
@@ -44,6 +54,11 @@ SQLite3
 
 This library cannot be called yet because of missing Parrot NCI
 signatures, see the example file for details.
+
+Microsoft Windows
+
+The win32-api-call.p6 script shows the beginning of a GUI application
+written in Perl 6.
 
 Testing
 
