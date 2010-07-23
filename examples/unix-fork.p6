@@ -3,18 +3,25 @@ use NativeCall;
 
 sub fork() returns Int is native('libz') { ... }
 
-my $pid = fork();
-if $pid {
-    say "process $pid is parent. ";
-}
-else {
-    say "process $pid is child. ";
+my $children = 15;
+for 1 .. $children -> $child {
+    my $pid = fork();
+    if $pid {
+        print "created child $child process $pid. ";
+        sleep 1; print "snore. ";
+    }
+    else {
+        for $child .. $children { sleep 1; print "yawn $child. "; }
+        exit 0;
+    }
 }
 
 # Notes:
-# * This is very OS-dependent.  Win32 will definitely not work.  Tested
-#   on Debian Linux.  Patches welcome for OSX, Solaris, FreeBSD etc.
-# * The 'libz' may not be the best or only usable library.  YMMV.
-# * The newlines from 'say' are often delayed, they come out together
-#   after both strings have been printed on the same line.  Hmm.
+# * This code can hang your computer, depending on the number of
+#   children versus your real and virtual memory.  For example, a 1GB
+#   netbook froze with 19 children.
+# * Monitor your processes with a utility such as pstree or top.
+# * The library is very OS-dependent.  Win32 will definitely not work.
+#   The 'libz' may not be the best or only usable library.  YMMV.
+#   Tested on Debian Linux.  Patches welcome for OSX, Solaris, *BSD etc.
 
