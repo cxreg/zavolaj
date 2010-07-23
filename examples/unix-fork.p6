@@ -1,7 +1,7 @@
 use v6;
 use NativeCall;
 
-sub fork() returns Int is native('libz') { ... }
+sub fork() returns Int is native() { ... }
 
 my $children = 15;
 for 1 .. $children -> $child {

@@ -89,22 +89,25 @@ our sub make-mapper(Mu $type) {
     }
 }
 
-our multi trait_mod:<is>(Routine $r, $libname, :$native!) {
+our multi trait_mod:<is>(Routine $r, $libname?, :$native!) {
     my $entry-point   = $r.name();
     my $call-sig      = perl6-sig-to-backend-sig($r);
     my $return-mapper = make-mapper($r.returns);
-    my $lib           = pir::loadlib__Ps($libname);
-    # $*ERR.say: "routine $r.name() signature $call-sig";
-    unless $lib {
-        die "The native library '$libname' required for '$entry-point' could not be located";
+    my $lib;
+    if $libname ne '' {
+        $lib = pir::loadlib__Ps($libname);
+        # $*ERR.say: "routine $r.name() signature $call-sig";
+        unless $lib {
+            die "The native library '$libname' required for '$entry-point' could not be located";
+        }
     }
     pir::setattribute__vPsP($r, '$!do', -> |$c {
         $return-mapper(
             pir::descalarref__PP( (pir::dlfunc__PPss(
-                pir::descalarref__PP($lib),
+                ($lib ?? pir::descalarref__PP($lib) !! pir::null__P()),
                 $entry-point,
                 $call-sig
-                ) // die("Could not locate symbol '$entry-point' in native library '$libname'")
+                ) // die("Could not locate symbol '$entry-point' in native library '{$libname || q<(resident)>}'")
             ).(|$c) )
         )
     });
